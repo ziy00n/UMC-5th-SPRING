@@ -16,4 +16,11 @@ public class StoreRequestDTO {
         @NotBlank
         String body;
     }
+
+    @Getter
+    public static class StoreDTO {
+        String name;
+        String address;
+        Float score;
+    }
 }
