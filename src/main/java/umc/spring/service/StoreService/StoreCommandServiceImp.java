@@ -5,9 +5,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.spring.apiPayload.code.status.ErrorStatus;
 import umc.spring.apiPayload.exception.handler.*;
+import umc.spring.converter.MissionConverter;
 import umc.spring.converter.StoreConverter;
 import umc.spring.domain.*;
 import umc.spring.repository.*;
+import umc.spring.web.dto.MissionRequestDTO;
 import umc.spring.web.dto.StoreRequestDTO;
 
 
@@ -49,5 +51,12 @@ public class StoreCommandServiceImp implements StoreCommandService {
         FoodCategory foodCategory = foodCategoryRepository.findById(request.getFoodCategory()).orElseThrow(() -> new FoodCategoryHandler(ErrorStatus.FOOD_CATEGORY_NOT_FOUND));
         Store newStore = StoreConverter.toStore(region, foodCategory, request);
         return storeRepository.save(newStore);
+    }
+
+    @Override
+    public Mission addMission(Long storeId, MissionRequestDTO.addMissionReq request) {
+        Store store = storeRepository.findById(storeId).orElseThrow(() -> new MissionHandler(ErrorStatus.STORE_NOT_FOUND));
+        Mission newMission = MissionConverter.toMission(store, request);
+        return missionRepository.save(newMission);
     }
 }
