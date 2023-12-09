@@ -4,18 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.spring.apiPayload.code.status.ErrorStatus;
-import umc.spring.apiPayload.exception.handler.MemberHandler;
-import umc.spring.apiPayload.exception.handler.RegionHandler;
-import umc.spring.apiPayload.exception.handler.StoreHandler;
+import umc.spring.apiPayload.exception.handler.*;
 import umc.spring.converter.StoreConverter;
-import umc.spring.domain.Member;
-import umc.spring.domain.Region;
-import umc.spring.domain.Review;
-import umc.spring.domain.Store;
-import umc.spring.repository.MemberRepository;
-import umc.spring.repository.RegionRepository;
-import umc.spring.repository.ReviewRepository;
-import umc.spring.repository.StoreRepository;
+import umc.spring.domain.*;
+import umc.spring.repository.*;
 import umc.spring.web.dto.StoreRequestDTO;
 
 
@@ -28,10 +20,12 @@ public class StoreCommandServiceImp implements StoreCommandService {
     private final StoreRepository storeRepository;
     private final MemberRepository memberRepository;
     private final RegionRepository regionRepository;
+    private final MissionRepository missionRepository;
+    private final FoodCategoryRepository foodCategoryRepository;
 
     @Override
     //@Transactional
-    public Review createReview(Long storeId, Long memberId, StoreRequestDTO.ReviewDTO request) {
+    public Review createReview(Long storeId, Long memberId, StoreRequestDTO.createReviewReq request) {
         Review newReview = StoreConverter.toReview(request);
         Store store = storeRepository.findById(storeId).orElseThrow(() -> new StoreHandler(ErrorStatus.STORE_NOT_FOUND));
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -44,7 +38,7 @@ public class StoreCommandServiceImp implements StoreCommandService {
     }
 
     @Override
-    public Store addStore(Long regionId, StoreRequestDTO.StoreDTO request) {
+    public Store addStore(Long regionId, StoreRequestDTO.addStoreReq request) {
         /*Optional<Region> optionalRegion = regionRepository.findById(regionId);
         if (optionalRegion.isPresent()) {
             Store newStore = StoreConverter.toStore(request, optionalRegion.get());
@@ -52,7 +46,8 @@ public class StoreCommandServiceImp implements StoreCommandService {
         }*/
 
         Region region = regionRepository.findById(regionId).orElseThrow(() -> new RegionHandler(ErrorStatus.REGION_NOT_FOUND));
-        Store newStore = StoreConverter.toStore(request, region);
+        FoodCategory foodCategory = foodCategoryRepository.findById(request.getFoodCategory()).orElseThrow(() -> new FoodCategoryHandler(ErrorStatus.FOOD_CATEGORY_NOT_FOUND));
+        Store newStore = StoreConverter.toStore(region, foodCategory, request);
         return storeRepository.save(newStore);
     }
 }

@@ -24,17 +24,17 @@ public class StoreRestController {
     private final StoreCommandService storeCommandService;
 
     @PostMapping("/{storeId}/reviews/{memberId}")
-    public ApiResponse<StoreResponseDTO.ReviewResultDTO> createReview(@RequestBody @Valid StoreRequestDTO.ReviewDTO request,
+    public ApiResponse<StoreResponseDTO.createReviewRes> createReview(@RequestBody @Valid StoreRequestDTO.createReviewReq request,
                                                                       @ExistStore @PathVariable(name = "storeId") Long storeId,
                                                                       @ExistMember @PathVariable(name = "memberId") Long memberId) {
         Review newReview = storeCommandService.createReview(storeId, memberId, request);
-        return ApiResponse.onSuccess(StoreConverter.toReviewResultDTO(newReview));
+        return ApiResponse.onSuccess(StoreConverter.toCreateReviewResDTO(newReview));
     }
 
     @PostMapping("/{regionId}")
-    public ApiResponse<StoreResponseDTO.StoreResultDTO> addStore(@RequestBody StoreRequestDTO.StoreDTO request,
-                                                          @PathVariable Long regionId) {
+    public ApiResponse<StoreResponseDTO.addStoreRes> addStore(@RequestBody @Valid StoreRequestDTO.addStoreReq request,
+                                                              @PathVariable Long regionId) {
         Store newStore = storeCommandService.addStore(regionId, request);
-        return ApiResponse.onSuccess(StoreConverter.toStoreResultDTO(newStore));
+        return ApiResponse.onSuccess(StoreConverter.toAddStoreResDTO(newStore));
     }
 }

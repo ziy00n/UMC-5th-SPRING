@@ -2,7 +2,6 @@ package umc.spring.domain;
 
 import lombok.*;
 import umc.spring.domain.common.BaseEntity;
-import umc.spring.domain.mapping.MemberPrefer;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -21,6 +20,9 @@ public class FoodCategory extends BaseEntity {
 
     @Column(nullable = false, length = 15)
     private String name;
+
+    @OneToMany(mappedBy = "foodCategory", cascade = CascadeType.ALL)
+    private List<Store> storeList = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "food_category", cascade = CascadeType.ALL)
 //    private List<MemberPrefer> memberPreferList = new ArrayList<>();
